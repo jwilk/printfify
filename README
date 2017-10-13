@@ -1,0 +1,15 @@
+.. code:: console
+
+   $ wc -c testcase.exe
+   3088 testcase.exe
+
+   $ md5sum testcase.exe
+   647f41722476c19770526448cdf90abb  testcase.exe
+
+   $ printfify < testcase.exe
+   printf 'MZ%058d\200\0\0\000%064dPE\0\000000\000%016d\13\001%090d\20\0\0\000%016d\0000\0\000%0160d\0000\0\0000000\0\14\0\000%02648d'
+
+   $ printfify < testcase.exe | sh | md5sum
+   647f41722476c19770526448cdf90abb  -
+
+.. vim:ft=rst ts=3 sts=3 sw=3 et
