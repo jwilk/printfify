@@ -17,13 +17,21 @@ def main():
     fmtstring = "'"
     args = []
     nzeros = 0
+    escape_zero = False
     def flush_zeros():
-        nonlocal fmtstring, nzeros
-        if nzeros < 5:
-            fmtstring += nzeros * '0'
+        nonlocal fmtstring, nzeros, escape_zero
+        if nzeros > 0 and escape_zero:
+            if nzeros < 4:
+                fmtstring += '%d' + (nzeros - 1) * '0'
+            else:
+                fmtstring += '%0{n}d'.format(n=nzeros)
         else:
-            fmtstring += '%0{n}d'.format(n=nzeros)
+            if nzeros < 5:
+                fmtstring += nzeros * '0'
+            else:
+                fmtstring += '%0{n}d'.format(n=nzeros)
         nzeros = 0
+        escape_zero = False
     for i, c in enumerate(input):
         if c == ord('0'):
             nzeros += 1
@@ -41,7 +49,11 @@ def main():
             if c >= 0o100:
                 ndigits = 3
             elif i + 1 < len(input) and ord('0') <= input[i + 1] <= ord('7'):
-                ndigits = 3
+                if c < 0o10 and input[i + 1] == ord('0'):
+                    ndigits = 1
+                    escape_zero = True
+                else:
+                    ndigits = 3
             elif c >= 0o10:
                 ndigits = 2
             else:
