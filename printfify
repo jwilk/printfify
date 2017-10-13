@@ -3,7 +3,14 @@
 # Copyright © 2017 Jakub Wilk <jwilk@jwilk.net>
 # SPDX-License-Identifier: MIT
 
+import ast
 import sys
+
+escapes = {0x25: '%%'}
+for e in 'abfnrtv\\':
+    c = ast.literal_eval('"\\{e}"'.format(e=e))
+    escapes[ord(c)] = '\\' + e
+del c, e
 
 def main():
     input = sys.stdin.buffer.read()
@@ -20,6 +27,13 @@ def main():
             else:
                 fmtstring += '%0{n}d'.format(n=nzeros)
             nzeros = 0
+        try:
+            s = escapes[c]
+        except KeyError:
+            pass
+        else:
+            fmtstring += s
+            continue
         if c < 0x20 or c >= 0x7F or c == 0x27:  # non-printable; apostrophe
             if c >= 0o100:
                 ndigits = 3
@@ -34,9 +48,6 @@ def main():
         if i == 0 and c == 0x2D:  # leading hyphen-minus
             fmtstring += '%s'
             args += ['-']
-            continue
-        if c in {0x25, 0x5C}:  # percent; backslash
-            fmtstring += chr(c) * 2
             continue
         fmtstring += chr(c)
     if nzeros < 5:
