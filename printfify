@@ -17,16 +17,19 @@ def main():
     fmtstring = "'"
     args = []
     nzeros = 0
+    def flush_zeros():
+        nonlocal fmtstring, nzeros
+        if nzeros < 5:
+            fmtstring += nzeros * '0'
+        else:
+            fmtstring += '%0{n}d'.format(n=nzeros)
+        nzeros = 0
     for i, c in enumerate(input):
         if c == ord('0'):
             nzeros += 1
             continue
         else:
-            if nzeros < 5:
-                fmtstring += nzeros * '0'
-            else:
-                fmtstring += '%0{n}d'.format(n=nzeros)
-            nzeros = 0
+            flush_zeros()
         try:
             s = escapes[c]
         except KeyError:
@@ -50,10 +53,7 @@ def main():
             args += ['-']
             continue
         fmtstring += chr(c)
-    if nzeros < 5:
-        fmtstring += nzeros * '0'
-    else:
-        fmtstring += '%0{n}d'.format(n=nzeros)
+    flush_zeros()
     fmtstring += "'"
     print('printf', fmtstring, *args)
 
