@@ -3,6 +3,7 @@
 # Copyright © 2017 Jakub Wilk <jwilk@jwilk.net>
 # SPDX-License-Identifier: MIT
 
+import argparse
 import ast
 import sys
 
@@ -13,7 +14,14 @@ for e in 'abfnrtv\\':
 del c, e
 
 def main():
-    input = sys.stdin.buffer.read()
+    ap = argparse.ArgumentParser()
+    ap.add_argument('path', metavar='FILE', nargs='?')
+    options = ap.parse_args()
+    if options.path is None:
+        input = sys.stdin.buffer.read()
+    else:
+        with open(options.path, 'rb') as file:
+            input = file.read()
     fmtstring = "'"
     args = []
     nzeros = 0
