@@ -7,11 +7,13 @@ import argparse
 import ast
 import sys
 
-escapes = {0x25: '%%'}
-for e in 'abfnrtv\\':
-    c = ast.literal_eval('"\\{e}"'.format(e=e))
-    escapes[ord(c)] = '\\' + e
-del c, e
+escapes = {}
+def _init_escapes():
+    escapes[0x25] = '%%'
+    for e in 'abfnrtv\\':
+        c = ast.literal_eval('"\\{e}"'.format(e=e))
+        escapes[ord(c)] = '\\' + e
+_init_escapes()
 
 def main():
     ap = argparse.ArgumentParser()
