@@ -15,9 +15,7 @@ install:
 - python3 -m pip install pydiatra $pyflakes
 - $if_pygments python3 -m pip install restructuredtext-lint pygments
 script:
-- ./printfify --help > help1
-- ./printfify < help1 | sh > help2
-- diff -u help1 help2
+- prove -v
 - python3 -m pydiatra .
 - python3 -m pyflakes .
 - $if_pygments restructuredtext-lint --encoding=UTF-8 README
