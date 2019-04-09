@@ -5,6 +5,14 @@
 
 set -e -u
 
+name="${0##*/}"
+name="${name%.t}"
+sh="${name#test-}"
+if [ "$sh" != sh ] && ! command -v "$sh" > /dev/null
+then
+    echo 1..0 "# skip $sh not found"
+    exit 0
+fi
 basedir="${0%/*}/.."
 prog="$basedir/printfify"
 echo 1..1
@@ -12,7 +20,8 @@ tmpdir=$(mktemp -d -t printfify.XXXXXX)
 "$prog" --help > "$tmpdir/help.orig"
 "$prog" < "$tmpdir/help.orig" > "$tmpdir/help.sh"
 cd "$tmpdir"
-sh help.sh > help.pf
+echo "# sh = $sh"
+"$sh" help.sh > help.pf
 if cmp -s help.orig help.pf
 then
     echo ok 1 round trip OK
