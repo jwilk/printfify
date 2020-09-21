@@ -26,8 +26,16 @@ def main():
             input = file.read()
     fmtstring = "'"
     args = []
+    nspaces = 0
     nzeros = 0
     escape_zero = False
+    def flush_spaces():
+        nonlocal fmtstring, nspaces
+        if nspaces < 4:
+            fmtstring += nspaces * ' '
+        else:
+            fmtstring += '%{n}s'.format(n=nspaces)
+        nspaces = 0
     def flush_zeros():
         nonlocal fmtstring, nzeros, escape_zero
         if nzeros > 0 and escape_zero:
@@ -43,10 +51,16 @@ def main():
         nzeros = 0
         escape_zero = False
     for i, c in enumerate(input):
-        if c == 0x30:  # zero
+        if c == 0x20:  # space
+            flush_zeros()
+            nspaces += 1
+            continue
+        elif c == 0x30:  # zero
+            flush_spaces()
             nzeros += 1
             continue
         else:
+            flush_spaces()
             flush_zeros()
         try:
             s = escapes[c]
@@ -75,6 +89,7 @@ def main():
             args += ['-']
             continue
         fmtstring += chr(c)
+    flush_spaces()
     flush_zeros()
     fmtstring += "'"
     print('printf', fmtstring, *args)
