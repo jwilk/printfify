@@ -13,7 +13,7 @@ escapes = {}
 def _init_escapes():
     escapes[0x25] = '%%'
     for e in 'abfnrtv\\':
-        c = ast.literal_eval('"\\{e}"'.format(e=e))
+        c = ast.literal_eval(f'"\\{e}"')
         escapes[ord(c)] = '\\' + e
 _init_escapes()
 
@@ -36,7 +36,7 @@ def main():
         if nspaces < 4:
             fmtstring += nspaces * ' '
         else:
-            fmtstring += '%{n}s'.format(n=nspaces)
+            fmtstring += f'%{nspaces}s'
         nspaces = 0
     def flush_zeros():
         nonlocal fmtstring, nzeros, escape_zero
@@ -44,12 +44,12 @@ def main():
             if nzeros < 4:
                 fmtstring += '%d' + (nzeros - 1) * '0'
             else:
-                fmtstring += '%0{n}d'.format(n=nzeros)
+                fmtstring += f'%0{nzeros}d'
         else:
             if nzeros < 5:
                 fmtstring += nzeros * '0'
             else:
-                fmtstring += '%0{n}d'.format(n=nzeros)
+                fmtstring += f'%0{nzeros}d'
         nzeros = 0
         escape_zero = False
     for i, c in enumerate(input):
@@ -84,7 +84,7 @@ def main():
                 ndigits = 2
             else:
                 ndigits = 1
-            fmtstring += '\\{c:0{w}o}'.format(c=c, w=ndigits)
+            fmtstring += f'\\{c:0{ndigits}o}'
             continue
         if i == 0 and c == 0x2D:  # leading hyphen-minus
             fmtstring += '%s'
