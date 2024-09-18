@@ -27,7 +27,6 @@ def main():
         with open(options.path, 'rb') as file:
             input = file.read()
     fmtstring = "'"
-    args = []
     nspaces = 0
     nzeros = 0
     escape_zero = False
@@ -71,7 +70,7 @@ def main():
         else:
             fmtstring += s
             continue
-        if c < 0x20 or c >= 0x7F or c == 0x27:  # non-printable; apostrophe
+        if c < 0x20 or c >= 0x7F or c == 0x27 or (i == 0 and c == 0x2D):  # non-printable; apostrophe; leading hyphen-minus
             if c >= 0o100:
                 ndigits = 3
             elif i + 1 < len(input) and 0x30 <= input[i + 1] <= 0x37:  # 0...7
@@ -86,15 +85,11 @@ def main():
                 ndigits = 1
             fmtstring += f'\\{c:0{ndigits}o}'
             continue
-        if i == 0 and c == 0x2D:  # leading hyphen-minus
-            fmtstring += '%s'
-            args += ['-']
-            continue
         fmtstring += chr(c)
     flush_spaces()
     flush_zeros()
     fmtstring += "'"
-    print('printf', fmtstring, *args)
+    print('printf', fmtstring)
 
 if __name__ == '__main__':
     main()
