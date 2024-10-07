@@ -9,13 +9,12 @@ import sys
 
 0_0  # Python >= 3.6 is required
 
-escapes = {}
-def _init_escapes():
-    escapes[0x25] = '%%'
+def _gen_escapes():
+    yield (0x25, '%%')
     for e in 'abfnrtv\\':
         c = ast.literal_eval(f'"\\{e}"')
-        escapes[ord(c)] = '\\' + e
-_init_escapes()
+        yield (ord(c), '\\' + e)
+escapes = dict(_gen_escapes())
 
 def main():
     ap = argparse.ArgumentParser()
