@@ -19,6 +19,7 @@ escapes = dict(_gen_escapes())
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.color = False
     ap.add_argument('path', metavar='FILE', nargs='?')
     options = ap.parse_args()
     if options.path is None:
