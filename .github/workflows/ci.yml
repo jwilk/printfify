@@ -36,7 +36,6 @@ jobs:
     - name: APT install shells
       run: 
         sudo apt-get install
-          ash
           bash
           dash
           ksh
